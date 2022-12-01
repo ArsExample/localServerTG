@@ -24,7 +24,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-def cmd_thread(messageText):
+def cmd_thread(messageText, chatId, context):
     command = messageText.split('cmd ')[1].split()
     output = ''
     process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
@@ -35,9 +35,10 @@ def cmd_thread(messageText):
 
     command = messageText.split('cmd ')[1]
     result = f'Output for command:\n{command} \nIs:\n {output}'
+    context.bot.send_message(chatId, result)
 
 
-def handle_command(messageText, user):
+def handle_command(messageText, user, chatId, context):
     result = 'unknown command'
 
     messageText = messageText.lower()
@@ -80,8 +81,9 @@ def handle_command(messageText, user):
         keyboard.release("f4")
         result = 'Watching command line shown'
     elif messageText.startswith('cmd '):
-        cmdThread = threading.Thread(target=cmd_thread, args=(messageText, ))
+        cmdThread = threading.Thread(target=cmd_thread, args=(messageText, chatId, context))
         cmdThread.start()
+        return 'command started to execute, waiting until it stops'
     elif messageText == 'matrix':
         os.startfile("matrix.bat")
         time.sleep(0.1)
@@ -113,17 +115,20 @@ def handle_command(messageText, user):
         phrase = messageText.split('type ')
         if phrase[0] == messageText:
             return 'What do u want to type?'
+
+        phrase = phrase[1]
         time.sleep(0.2)
         try:
             keyboard.write(phrase)
             result = f'Phrase {phrase} type successfully'
         except ValueError as error:
-            result = f'Failed to typ{phrase}: error was: \n{error}'
+            result = f'Failed to type{phrase}: error was: \n{error}'
+            print(error)
 
     return result
 
 
-def get_response(messageText, user):
+def get_response(messageText, user, chatId, context):
     if not authed_users.__contains__(user):
         if messageText == password:
             authed_users.append(user)
@@ -131,7 +136,7 @@ def get_response(messageText, user):
         else:
             return 'You can\'t send commands, because you are unauthorized\nEnter a password to start sending commands'
     else:
-        response = handle_command(messageText, user)
+        response = handle_command(messageText, user, chatId, context)
     return response
 
 
@@ -144,7 +149,7 @@ def handle_messages(update: Update, context: CallbackContext) -> None:
     print(message.chat_id)
 
     print(f'Received a message from @{username} with text: {messageText}')
-    response = get_response(messageText, user)
+    response = get_response(messageText, user, message.chat_id, context)
 
     index = 0
     if response.__len__() > 4096:
