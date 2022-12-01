@@ -90,12 +90,8 @@ def handle_command(messageText, user):
         keyboard.release("alt")
         keyboard.release("enter")
         result = 'Matrix shown'
-    elif messageText.startswith('press ') or messageText.startswith('type '):
+    elif messageText.startswith('press '):
         key = messageText.split('press ')
-        if key[0] == messageText:
-            key = messageText.split('type ')
-            if key[0] == messageText:
-                return 'Invalid key'
         try:
             keyboard.press(key[1])
             keyboard.release(key[1])
@@ -113,8 +109,16 @@ def handle_command(messageText, user):
         button_text = command_text.split()[2]
         pyautogui.alert(text=text, title=title, button=button_text)
         result = f'Alert window with title: {title}, text: {text} and button text: {button_text} was shown'
-
-
+    elif messageText.startswith('type '):
+        phrase = messageText.split('type ')
+        if phrase[0] == messageText:
+            return 'What do u want to type?'
+        time.sleep(0.2)
+        try:
+            keyboard.write(phrase)
+            result = f'Phrase {phrase} type successfully'
+        except ValueError as error:
+            result = f'Failed to typ{phrase}: error was: \n{error}'
 
     return result
 
