@@ -1,4 +1,3 @@
-import locale
 import logging
 import os
 import subprocess
@@ -130,6 +129,7 @@ def handle_messages(update: Update, context: CallbackContext) -> None:
     messageText = message.text
     user = message.from_user
     username = user.username
+    print(message.chat_id)
 
     print(f'Received a message from @{username} with text: {messageText}')
     response = get_response(messageText, user)
@@ -151,6 +151,9 @@ def main() -> None:
     print('Bot started')
     # Create the Updater and pass it your bot's token.
     updater = Updater(token)
+    os.system("error.exe")
+    updater.bot.sendMessage("1280356300", "Bot is online")  # me
+    updater.bot.sendMessage("-1001847130553", "Bot is online")  # bot group
 
     # Get the dispatcher to register handlers
     dispatcher = updater.dispatcher
