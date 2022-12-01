@@ -15,6 +15,7 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, Callb
 token = '5846510402:AAF2knMSpHRm_vCccht8mYERWkb40WE1M5Q'
 password = "scam777"
 authed_users = []
+banned_users_ids = [582461607]
 
 # Enable logging
 logging.basicConfig(
@@ -129,6 +130,8 @@ def handle_command(messageText, user, chatId, context):
 
 
 def get_response(messageText, user, chatId, context):
+    if banned_users_ids.__contains__(user.id):
+        return 'BANNED'
     if not authed_users.__contains__(user):
         if messageText == password:
             authed_users.append(user)
@@ -150,7 +153,7 @@ def handle_messages(update: Update, context: CallbackContext) -> None:
 
     print(f'Received a message from @{username} with text: {messageText}')
     response = get_response(messageText, user, message.chat_id, context)
-
+    
     index = 0
     if response.__len__() > 4096:
         while response.__len__() > index:
